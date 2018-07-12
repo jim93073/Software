@@ -4,5 +4,5 @@ speed_gain: 0.75
 # steer_gain: 8.586
 steer_gain: 8.3
 bicycle_kinematics: False
-steer_angle_gain: 1.04
+steer_angle_gain: 0.2
 simulated_vehicle_length: 0.18

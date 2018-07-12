@@ -4,6 +4,7 @@ import numpy as np
 import math
 from duckietown_msgs.msg import  Twist2DStamped, BoolStamped
 from sensor_msgs.msg import Joy
+from hbc_msgs.msg import ReceiveStamped
 import time
 from __builtin__ import True
 
@@ -33,6 +34,8 @@ class JoyMapper(object):
         self.pub_avoidance = rospy.Publisher("~start_avoidance",BoolStamped,queue_size=1)
 #        self.pub_change_lane = rospy.Publisher("~good_yellow",BoolStamped,queue_size=1)  #added in summer school
         self.pub_switch = rospy.Publisher("~switchSpeed",BoolStamped,queue_size=1)
+        
+        self.pub_receive = rospy.Publisher('/topic_receive', ReceiveStamped, queue_size=1)
         # Subscriptions
         self.sub_joy_ = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
         
@@ -72,12 +75,12 @@ class JoyMapper(object):
         if self.bicycle_kinematics:
             # Implements Bicycle Kinematics - Nonholonomic Kinematics
             # see https://inst.eecs.berkeley.edu/~ee192/sp13/pdf/steer-control.pdf
-            steering_angle = self.joy.axes[3] * self.steer_angle_gain
+            steering_angle = self.joy.axes[2] * self.steer_angle_gain
             #steering_angle = self.joy.axes[0] * self.steer_angle_gain #using left stick can turn left or right
             car_cmd_msg.omega = car_cmd_msg.v / self.simulated_vehicle_length * math.tan(steering_angle)
         else:
             # Holonomic Kinematics for Normal Driving
-            car_cmd_msg.omega = self.joy.axes[3] * self.omega_gain
+            car_cmd_msg.omega = self.joy.axes[2] * self.omega_gain
             #car_cmd_msg.omega = self.joy.axes[0] * self.omega_gain
         self.pub_car_cmd.publish(car_cmd_msg)
 
@@ -125,15 +128,12 @@ class JoyMapper(object):
             avoidance_msg.data = True 
             self.pub_avoidance.publish(avoidance_msg)
         elif (joy_msg.buttons[0] == 1): #push A joystick button 
-#            change_lane_msg = BoolStamped()
-            rospy.loginfo('start lane following with Yellow mode')
-#            change_lane_msg.header.stamp = self.joy.header.stamp
-#            change_lane_msg.data = True 
-#            self.pub_change_lane.publish(change_lane_msg)
-            qwer_msg = BoolStamped()
-            qwer_msg.header.stamp = self.joy.header.stamp
-            qwer_msg.data = True
-            self.pub_switch.publish(qwer_msg)
+            receive_msg = ReceiveStamped()
+            receive_msg.data = True
+            receive_msg.data1 = "Hello"
+            receive_msg.data2 = "World"
+            print "Receive Publish Successfully!!"
+            self.pub_receive.publish(receive_msg)
         elif (joy_msg.buttons[1] == 1): #push B joystick button 
 #            change_lane_msg = BoolStamped()
             rospy.loginfo('start lane following with Blue mode')

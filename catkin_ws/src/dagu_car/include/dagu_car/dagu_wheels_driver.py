@@ -11,6 +11,9 @@
 
 from Adafruit_MotorHAT import Adafruit_MotorHAT
 from math import fabs, floor
+from hbc_msgs.msg import LEDState
+import rospy
+
 
 class DaguWheelsDriver:
     LEFT_MOTOR_MIN_PWM = 60        # Minimum speed for left motor  
@@ -38,6 +41,10 @@ class DaguWheelsDriver:
         self.leftSpeed = 0.0
         self.rightSpeed = 0.0
         self.updatePWM()
+        
+        # Publications
+        #rospy.init_node('led_topic_publisher')
+        #self.pub_led = rospy.Publisher('/topic_led', LEDState, queue_size=1)
 
     def PWMvalue(self, v, minPWM, maxPWM):
         pwm = 0
@@ -70,6 +77,19 @@ class DaguWheelsDriver:
         elif vr < 0: 
             rightMotorMode = Adafruit_MotorHAT.BACKWARD
 
+       #LEDState.msg
+#        led_msg = LEDState()
+#       if vl > 0 and vr < 0 :
+#           led_msg.mode = "left"
+#        elif vl < 0 and vr > 0 :
+#            led_msg.mode = "right"
+#        elif vl > 0 and vr > 0 :
+#            led_msg.mode = "forward"
+#        elif vl < 0 and vr < 0 :
+#            led_msg.mode = "backward"
+#        self.pub_led.publish(led_msg)
+        
+        
         self.leftMotor.setSpeed(pwml)
         self.leftMotor.run(leftMotorMode)
         self.rightMotor.setSpeed(pwmr)

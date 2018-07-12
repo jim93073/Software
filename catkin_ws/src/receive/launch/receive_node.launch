@@ -1,0 +1,5 @@
+<launch>
+    <!-- led_node -->
+    <node pkg="receive" type="receive_node.py" name="receive_topic_publisher" output="screen">
+    </node>
+</launch>

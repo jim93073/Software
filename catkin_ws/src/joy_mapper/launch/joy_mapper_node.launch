@@ -18,6 +18,10 @@
 		<rosparam command="load" file="$(find duckietown)/config/$(arg config)/$(arg pkg_name)/$(arg node_name)/$(arg param_file_name).yaml"/>
 	</node>	
 
+  <!-- receive -->
+  <include file="$(find receive)/launch/receive_node.launch">
+  </include>
+
 	<!-- Subscribe Topics -->
 	<!-- "joy": sensor_msgs/Joy. The command read from joystick -->
 	<!-- Publish Topics -->

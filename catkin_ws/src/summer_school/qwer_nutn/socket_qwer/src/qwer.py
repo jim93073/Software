@@ -25,6 +25,7 @@ class Qwer_Player(object):
         self.flag = 0
         self.sound = ''
         self.n_stop = False
+        self.state_verbose = False
 
 
         #Start socket function
@@ -111,13 +112,13 @@ class Qwer_Player(object):
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         rospy.loginfo("create socket succ!")
-        sock.settimeout(1000)    # if 1000s it's no data received. it will interrupt
+        sock.settimeout(10000)    # if 1000s it's no data received. it will interrupt
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    #addr can reuse
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)    #keep connect
 
         sock.bind(('', 50007))  #(HOST, PORT)
         rospy.loginfo("bind socket succ!")
-        sock.listen(2)    #maximum connect 3 clients
+        sock.listen(5)    #maximum connect 3 clients
         rospy.loginfo("listen success!")
         while True:
             rospy.loginfo("listen for client...")
@@ -125,7 +126,9 @@ class Qwer_Player(object):
             rospy.loginfo("get client")
             rospy.loginfo(ADDR)
             szBuf = conn.recv(1024)
-            rospy.loginfo("i recv ----------- szBuf= %s" % (szBuf))
+            #rospy.loginfo("i recv ----------- szBuf= %s" % (szBuf))
+            rospy.loginfo(szBuf)
+            rospy.loginfo("---------------------------------debug----------------------")
             if szBuf == "1\n":
                 rospy.loginfo("forward")
                 #self.leftMotor.setSpeed(120)
@@ -133,9 +136,9 @@ class Qwer_Player(object):
                 #self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
                 #self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
                 #self.sound="/home/ubuntu/duckietown/catkin_ws/src/summer_school/qwer_nutn/socket_qwer/include/socket_qwer/nier.ogg"
-                msg = String()
-                msg.data = 'using app button'
-                self.pub_voice.publish(msg)
+                #msg = String()
+                #msg.data = 'using app button'
+                #self.pub_voice.publish(msg)
                 qwer_msg = BoolStamped()
                 qwer_msg.data = True
                 self.pub_switch.publish(qwer_msg)
@@ -185,17 +188,17 @@ class Qwer_Player(object):
                 override_msg = BoolStamped()
                 override_msg.data = True
                 self.pub_joy_override.publish(override_msg)
-            elif szBuf == '1':
+            elif szBuf == "1":
                 rospy.loginfo("receive from linkit : %s" %(szBuf))
                 e_stop_msg = BoolStamped()
                 e_stop_msg.data = True 
                 self.pub_e_stop.publish(e_stop_msg)
-            elif szBuf == '2':
+            elif szBuf == "2":
                 rospy.loginfo("receive from linkit : %s" %(szBuf))
                 msg = String()
                 msg.data = 'repeat now Giude voice'
                 self.pub_voice.publish(msg)
-            elif szBuf == '3':
+            elif szBuf == "3":
                 rospy.loginfo("receive from linkit : %s" %(szBuf))
                 msg = String()
                 msg.data = 'pause mode'
