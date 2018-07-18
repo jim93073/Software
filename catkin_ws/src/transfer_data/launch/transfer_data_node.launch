@@ -1,0 +1,5 @@
+<launch>
+    <!-- led_node -->
+    <node pkg="transfer_data" type="transfer_data_node.py" name="transfer_data_topic_publisher" output="screen">
+    </node>
+</launch>

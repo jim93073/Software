@@ -1,1 +1,2 @@
+bool data
 string mode

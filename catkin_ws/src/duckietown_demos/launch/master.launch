@@ -14,6 +14,7 @@
 	<arg name="loc" default="-1"/>
 	<arg name="line_detector_param_file_name" default="$(arg param_file_name)"/>
 	<arg name="intersectionType" />
+  <arg name="local" default="false"/>	<!-- default: empty -->
 	<!-- end basic args -->
  
 <!-- the things that are "on" by default: 
@@ -27,10 +28,17 @@
 <!-- general convention on remappings is that we remap the "subscribers" -->
 
 	<!-- start switch args -->
+  <arg name="led" default="false"/>
+  <arg name="transfer_data" default="true"/>
+  <arg name="qrcode" default="false"/>
+  <arg name="apriltags" default="true"/>
+  <arg name="/apriltags/local" default="false"/>
+	<arg name="apriltags_following" default="false"/> <!-- use Ctrl+F to find "follow_apriltags_node/car_cmd" -->
+ 
 	<arg name="camera" default="true"/>
-	<arg name="/camera/raw" default="false"/>
+	<arg name="/camera/raw" default="true"/> <!-- default: false-->
 	<arg name="/camera/cam_info" default="true"/>
-	<arg name="/camera/raw/rect" default="false"/>
+	<arg name="/camera/raw/rect" default="true"/> <!-- default: false-->
 	<arg name="/camera/local" default="false" />
 
 	<arg name="wheels" default="true"/>
@@ -58,8 +66,8 @@
 	<arg name="/vehicle_avoidance/detection" default="true" />
 	<arg name="/vehicle_avoidance/control" default="true"/>
 
-	<arg name="apriltags" default="false"/>
-	<arg name="/apriltags/local" default="false" />
+	<!--arg name="apriltags" default="false"/-->
+	<!--arg name="/apriltags/local" default="false" /-->
 
 
 	<arg name="LED" default="true" />
@@ -98,7 +106,63 @@
 	
 	<!-- Enable statistics -->
 	<param name="enable_statistics" value="$(arg statistics)"/>
-
+  
+  <!-- Start Apriltags -->
+	<group if="$(arg apriltags)">
+		<!-- AprilTags Detections -->
+		<remap from="image_rect" to="camera_node/image/rect" />
+		<remap from="compressed" to="camera_node/image/compressed" />
+		<remap from="camera_node/image/camera_info" to="camera_node/raw_camera_info" />
+		<include file="$(find apriltags_ros)/launch/apriltag_detector_node.launch">
+			<arg name="veh" value="$(arg veh)"/>
+			<arg name="local" value="$(arg local)"/>
+			<arg name="config" value="$(arg config)"/>
+			<arg name="param_file_name" value="$(arg param_file_name)"/>
+		</include>
+		<!-- open detect_apriltags_node -->
+		<remap from="detect_apriltags_node/tag_info" to="tag_detections" />
+		<include file="$(find csp_demo_apriltags)/launch/detect_apriltags_node.launch">
+			<arg name="veh" value="$(arg veh)"/>
+			<arg name="local" value="$(arg local)"/>
+			<arg name="config" value="$(arg config)"/>
+		</include>
+	</group>
+  <!--End Apriltags -->
+ 
+  <!-- Start apriltags_following -->
+	<group if="$(arg apriltags_following)">
+		<!-- Follow apriltags node -->
+		<!-- Receive msg from detect_apriltags_node -->
+		<remap from="follow_apriltags_node/input" to="detect_apriltags_node/position_info" />
+		<!-- open follow_apriltags_node -->
+		<include file="$(find csp_demo_apriltags)/launch/follow_apriltags_node.launch">
+			<arg name="veh" value="$(arg veh)"/>
+			<arg name="local" value="$(arg local)"/>
+		</include>
+  </group>
+  <!--End apriltags_following -->
+  
+  <!--Start led -->
+  <group if="$(arg led)">
+    <include file="$(find led)/launch/led_node.launch">
+    </include>
+  </group>
+  <!--End led -->
+ 
+  <!--Start transfer_data -->
+  <group if="$(arg transfer_data)">
+    <include file="$(find transfer_data)/launch/transfer_data_node.launch">
+    </include>
+  </group>
+  <!--End transfer_data -->
+  
+  <!--Start qrcode -->
+  <group if="$(arg qrcode)">
+    <include file="$(find qrcode)/launch/qrcode_node.launch">
+    </include>
+	</group>
+  <!--End qrcode -->
+  
 	<!-- Start Camera -->  
 	<group if="$(arg camera)">
 		<include  file="$(find pi_camera)/launch/camera_node.launch">
@@ -161,8 +225,9 @@
 	<!-- Start Wheels -->
 	<group if="$(arg wheels)">
 
-	    <remap from="inverse_kinematics_node/wheels_cmd" to="wheels_driver_node/wheels_cmd" />
+	  <remap from="inverse_kinematics_node/wheels_cmd" to="wheels_driver_node/wheels_cmd" />
 		<remap from="inverse_kinematics_node/car_cmd" to="car_cmd_switch_node/cmd"/>
+    <!--remap from="inverse_kinematics_node/car_cmd" to="follow_apriltags_node/car_cmd"/-->
 		<include file="$(find dagu_car)/launch/inverse_kinematics_node.launch">
 			<arg name="veh" value="$(arg veh)"/>
 		</include>
@@ -366,30 +431,6 @@
 		</group>
 	</group>
 	<!-- End Vehicle Avoidance -->
-	
-	<!-- Start April Tags -->
-	<group if="$(arg apriltags)">
-		<!-- AprilTags Detections -->
-		<remap from="image_rect" to="camera_node/image/rect" />
-		<remap from="camera_node/image/camera_info" to="camera_node/raw_camera_info" />
-		<remap from="apriltags_detector_node/image_raw" to="camera_node/image/rect"/>
-		<remap from="apriltags_detector_node/camera_info" to="camera_node/raw_camera_info"/>
-		<include file="$(find apriltags_ros)/launch/apriltag_detector_node.launch">
-			<arg name="veh" value="$(arg veh)"/>
-			<arg name="local" value="$(arg /apriltags/local)"/>
-			<arg name="config" value="$(arg config)"/>
-			<arg name="param_file_name" value="$(arg param_file_name)"/>
-		</include>
-		<!-- Postprocessing node -->
-		<remap from="apriltags_postprocessing_node/apriltags_in" to="tag_detections" />
-		<include file="$(find apriltags_ros)/launch/apriltags_postprocessing_node.launch">
-			<arg name="veh" value="$(arg veh)"/>
-			<arg name="local" value="$(arg /apriltags/local)"/>
-			<arg name="config" value="$(arg config)"/>
-			<arg name="param_file_name" value="$(arg param_file_name)"/>
-		</include>
-	</group>
-	<!--End Apriltags -->
 
 	<!-- Start LEDs Detection -->
 	<group if="$(arg LED)">

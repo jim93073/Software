@@ -1,0 +1,17 @@
+<launch>
+    <arg name="pkg_name" value="qrcode"/>
+  	<arg name="node_name" default="qrcode_node"/>
+  	<arg name="veh" default="hbc" doc="Name of vehicle. ex: megaman"/>
+  	<arg name="local" default="false" doc="true for running on laptop. false for running on vehicle."/>
+  	<arg name="config" default="baseline" doc="Specify a config."/>
+  	<arg name="param_file_name" default="default" doc="Specify a param file. ex:megaman"/>
+    
+    <!-- qrcode -->
+    <node pkg="qrcode" type="qrcode_node.py" name="qrcode_node" output="screen">
+    </node>
+    
+    <!-- decode_img -->
+    <include unless="$(arg local)" file="$(find duckietown)/machines"/>
+	  <node unless="$(arg local)" ns="$(arg veh)" machine="$(arg veh)" pkg="$(arg pkg_name)" type="decode_img.py" name="decode_img" output="screen" clear_params="true" required="true">
+	  </node>	
+</launch>

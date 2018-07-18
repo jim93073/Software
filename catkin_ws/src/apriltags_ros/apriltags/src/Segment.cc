@@ -13,7 +13,7 @@ float Segment::segmentLength() {
 }
 
 void Segment::printSegment() {
-  std::cout <<"("<< x0 <<","<< y0 <<"), "<<"("<< x1 <<","<< y1 <<")" << std::endl;
+  //std::cout <<"("<< x0 <<","<< y0 <<"), "<<"("<< x1 <<","<< y1 <<")" << std::endl;
 }
 
 int Segment::idCounter = 0;

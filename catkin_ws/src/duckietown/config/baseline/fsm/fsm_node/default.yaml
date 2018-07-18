@@ -2,11 +2,22 @@
 initial_state: "JOYSTICK_CONTROL"
 
 events: #Maps from subscribing topic to signal ids
-  receive:
+  transferData:
     topic: "topic_receive"
-    msg_type: "ReceiveStamped"
+    msg_type: "TransferData"
     trigger: True
-  
+  led:
+    topic: "topic_led"
+    msg_type: "LEDState"
+    trigger: True
+  qrcode:
+    topic: "topic_qrcode"
+    msg_type: "QrcodeStamped"
+    trigger: True
+  sendData:
+    topic: "topic_sendData"
+    msg_type: "SendData"
+    trigger: True
   
   joystick_override_on: 
     topic: "joy_mapper_node/joystick_override"

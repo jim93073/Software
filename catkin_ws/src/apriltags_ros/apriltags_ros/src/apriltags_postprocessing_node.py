@@ -10,9 +10,9 @@ from geometry_msgs.msg import PoseStamped
 class AprilPostPros(object):
     """ """
     def __init__(self):    
-        """ """
+        """ """        
         self.node_name = "apriltags_postprocessing_node"
-
+        print "======================initial apriltags======================="
         # Load parameters
         self.camera_x     = self.setupParam("~camera_x", 0.065)
         self.camera_y     = self.setupParam("~camera_y", 0.0)
@@ -70,7 +70,7 @@ class AprilPostPros(object):
         return value
 
     def callback(self, msg):
-
+        print "=========================new_info.id========================"
         tag_infos = []
 
         # Load tag detections message
@@ -80,6 +80,10 @@ class AprilPostPros(object):
 
             new_info = TagInfo()
             new_info.id = int(detection.id)
+            
+            print "=========================new_info.id========================"
+            print new_info.id
+            
             id_info = self.tags_dict[new_info.id]
             
             # Check yaml file to fill in ID-specific information
@@ -143,3 +147,5 @@ if __name__ == '__main__':
     rospy.init_node('AprilPostPros',anonymous=False)
     node = AprilPostPros()
     rospy.spin()
+   
+        

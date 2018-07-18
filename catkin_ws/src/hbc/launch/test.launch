@@ -1,0 +1,5 @@
+<launch>
+    <!-- test -->
+    <node pkg="hbc" type="test.py" name="test" output="screen">
+    </node>
+</launch>

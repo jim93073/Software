@@ -43,8 +43,7 @@ class DaguWheelsDriver:
         self.updatePWM()
         
         # Publications
-        #rospy.init_node('led_topic_publisher')
-        #self.pub_led = rospy.Publisher('/topic_led', LEDState, queue_size=1)
+        self.pub_led = rospy.Publisher('/topic_led', LEDState, queue_size=1)
 
     def PWMvalue(self, v, minPWM, maxPWM):
         pwm = 0
@@ -77,17 +76,28 @@ class DaguWheelsDriver:
         elif vr < 0: 
             rightMotorMode = Adafruit_MotorHAT.BACKWARD
 
-       #LEDState.msg
-#        led_msg = LEDState()
-#       if vl > 0 and vr < 0 :
-#           led_msg.mode = "left"
-#        elif vl < 0 and vr > 0 :
-#            led_msg.mode = "right"
-#        elif vl > 0 and vr > 0 :
-#            led_msg.mode = "forward"
-#        elif vl < 0 and vr < 0 :
-#            led_msg.mode = "backward"
-#        self.pub_led.publish(led_msg)
+        #LEDState.msg
+        led_msg = LEDState()
+        led_msg.data = True
+        
+        if vl > 0 and vr < 0 :
+            led_msg.mode = "left"
+            #self.pub_led.publish(led_msg)
+        elif vl < 0 and vr > 0 :
+            led_msg.mode = "right"
+            #self.pub_led.publish(led_msg)
+        elif vl > 0 and vr > 0 :
+            led_msg.mode = "forward"
+            #self.pub_led.publish(led_msg)
+        elif vl < 0 and vr < 0 :
+            led_msg.mode = "backward"
+            #self.pub_led.publish(led_msg)
+        else:
+            led_msg.mode = "stop"
+        try:
+            self.pub_led.publish(led_msg)
+        except:
+            pass
         
         
         self.leftMotor.setSpeed(pwml)
