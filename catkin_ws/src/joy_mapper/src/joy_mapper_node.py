@@ -106,12 +106,14 @@ class JoyMapper(object):
 
     def processButtons(self, joy_msg):
         if (joy_msg.buttons[0] == 1): #X button 
-            transferData_msg = TransferData()
+            '''transferData_msg = TransferData()
             transferData_msg.data = True
             sysTime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            transferData_msg.data1 = sysTime
+            transferData_msg.time = sysTime
+            transferData_msg.data1 = "data"
             transferData_msg.data2 = "Hello Duckietown=D"
-            self.pub_transferData.publish(transferData_msg)
+            self.pub_transferData.publish(transferData_msg)'''
+            print "[X button] There's nothing here QAQ"
         elif (joy_msg.buttons[1] == 1): #A button 
             override_msg = BoolStamped()
             override_msg.header.stamp = self.joy.header.stamp

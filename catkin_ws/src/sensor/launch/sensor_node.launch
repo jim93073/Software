@@ -1,0 +1,6 @@
+<launch>
+    <!-- DHT11_node -->
+    <node pkg="sensor" type="command.py" name="topic_publisher" output="screen">
+    </node>
+    
+</launch>

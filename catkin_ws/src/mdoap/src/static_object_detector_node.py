@@ -34,16 +34,16 @@ class Matcher:
         
         if contour_type == "CONE":
             frame_threshed = cv2.inRange(hsv_img, self.CONE[0], self.CONE[1])
-            ret,thresh = cv2.threshold(frame_threshed,22,255,0)
+            ret,thresh = cv2.threshold(frame_threshed,22,255,0)            
         elif contour_type == "DUCK_COLOR":
             frame_threshed = cv2.inRange(hsv_img, self.DUCK[0], self.DUCK[1])
-            ret,thresh = cv2.threshold(frame_threshed,30,255,0)
+            ret,thresh = cv2.threshold(frame_threshed,30,255,0)            
         elif contour_type == "DUCK_CANNY":
             frame_threshed = cv2.inRange(hsv_img, self.DUCK[0], self.DUCK[1])
             frame_threshed = cv2.adaptiveThreshold(frame_threshed,255,\
                     cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,5,2)
-            thresh = cv2.Canny(frame_threshed, 100,200)
-        else:
+            thresh = cv2.Canny(frame_threshed, 100,200)            
+        else:            
             return 
         
         filtered_contours = []

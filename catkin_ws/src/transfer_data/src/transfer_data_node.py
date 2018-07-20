@@ -9,7 +9,7 @@ class Transferdata(object):
 
     def cbTransferData(self, transferData_msg):
         self.transferData_msg = transferData_msg
-        sendData = {'data1':self.transferData_msg.data1,'data2':self.transferData_msg.data2,'token':'7XWE32L52T03DH61'}
+        sendData = {'data1':self.transferData_msg.data1,'data2':self.transferData_msg.data2,'time':self.transferData_msg.time, 'token':'7XWE32L52T03DH61'}
         r = requests.get("http://coursesrv.nutn.edu.tw/S10582015/receive.php",params=sendData)
         print "[X button] Upload data successfully!!"
         
